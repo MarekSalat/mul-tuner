@@ -7,7 +7,11 @@
 
 
 
-
+.dg button, .dg input, .dg optgroup, .dg select, .dg textarea {
+   margin: 0;
+   font: inherit;
+   color: #000000;
+}
 
 
 
