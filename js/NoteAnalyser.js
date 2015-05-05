@@ -4,10 +4,10 @@
 
 var NoteAnalyser = (function(){
     function NoteAnalyser(baseNotePitch, baseNoteMidiNumber){
-        this.BASE_NOTE = baseNoteMidiNumber || 69;    // midi number for A4
+        this.BASE_NOTE = baseNoteMidiNumber || 69;      // midi number for A4
         this.BASE_NOTE_PITCH = baseNotePitch || 440.0 ; // frequency for A4 [Hz]
         this.NOTES_PER_OCTAVE = 12;
-        this.NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        this.NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "H"];
     }
 
     NoteAnalyser.prototype.getNoteFromFreq = function ( frequency ) {

@@ -1,18 +1,38 @@
 $(function(){
+    function resizeCanvases() {
+        function resizeCanvas(canvas, width, heigth){
+            canvas.width = width;
+            canvas.height = heigth;
+            var context = canvas.getContext("2d");
+            context.canvas.width  = canvas.width;
+            context.canvas.height = canvas.height;
+        }
+        var ratio = 0.6;
+        var border = 0;
+
+        resizeCanvas(document.getElementById("tuner-canvas"), window.innerWidth, window.innerHeight*ratio+2);
+        resizeCanvas(document.getElementById("hist-freq-canvas"), window.innerWidth, window.innerHeight*(1-ratio));
+    }
+    window.addEventListener('resize', resizeCanvases, false);
+    resizeCanvases();
+
     var buffer;
     var sourceNode;
 
     var notes = new NoteAnalyser();
 
-    var gui = new dat.GUI();
-
     var audioInput = {id: null};
     var noteBuffer = {"he": null, "h": null, "g": null, "d": null, "a": null, "e": null, "aa": null};
-    var movingAverage = new MovingAverage(1);
+    var movingAverage = new MovingAverage(32);
 
     var AudioContext = window.AudioContext || window.webkitAudioContext;
     var audioContext = new AudioContext();
     var analyser = new AudioAnalyser(audioContext);
+
+    var histRenderer = new AudioAnalyserHistRenderer(document.getElementById("hist-freq-canvas"), analyser);
+    var tunerRenderer = new TunerRenderer(document.getElementById("tuner-canvas"));
+    histRenderer.draw();
+    tunerRenderer.draw();
 
     var request = new XMLHttpRequest();
     request.open("GET", "res/whistling3.ogg", true);
@@ -26,6 +46,12 @@ $(function(){
 
     analyser.onFrequencyChanged = function (frequency) {
         var result = notes.getNoteInformation(movingAverage.push(frequency));
+
+        histRenderer.draw();
+
+        tunerRenderer.update(result);
+        tunerRenderer.draw();
+
         $("#debug").text(JSON.stringify(result,null,2));
     };
 
@@ -39,13 +65,21 @@ $(function(){
         if(sourceNode && sourceNode.stop)
             sourceNode.stop(0);
         sourceNode = null;
+        tunerRenderer.reset();
     };
 
+    var gui = new dat.GUI();
     gui.add({stop: reset}, "stop");
+    gui.add({d:true}, "d").name("Debug").onFinishChange(function (value){
+        if(value)
+            $("#debug").show();
+        else
+            $("#debug").hide()
+    });
 
     var settingFolder = gui.addFolder("Setting");
     settingFolder.add(analyser, "GAMMA").min(0.8).max(1);
-    settingFolder.add({windowSize:movingAverage.size}, "windowSize").step(1).min(1).max(32).name("AVG window size").onFinishChange(function(value){
+    settingFolder.add({windowSize:movingAverage.size}, "windowSize").step(1).min(1).max(64).name("AVG window size").onFinishChange(function(value){
         movingAverage = new MovingAverage(value);
     });
     settingFolder.add({i: "Parabolic"}, "i", ["Parabolic", "Gaussian"]).name("FFT interpolation").onFinishChange(function (value) {
@@ -86,7 +120,7 @@ $(function(){
         play();
     });
 
-    gui.add({pitch: notes.BASE_NOTE_PITCH}, 'pitch').min(27.5).max(4189).onFinishChange(function (frequency) {
+    gui.add({pitch: notes.BASE_NOTE_PITCH}, 'pitch').min(27.5).max(4189).name("Play pitch (sin)").onFinishChange(function (frequency) {
             reset();
 
             sourceNode = audioContext.createOscillator();
@@ -143,6 +177,17 @@ $(function(){
             alert('getUserMedia threw exception :' + e);
         }
     }}, "live");
+
+    var tunerFolder = gui.addFolder("Tunner setting");
+
+    tunerFolder.add({basePitch: 440}, "basePitch").min(80).max(880).step(1).onFinishChange(function(value){
+        notes.BASE_NOTE_PITCH = value;
+    });
+
+    tunerFolder.add({tuning: 0}, "tuning",{
+        "E standart (E, A, D, G, H, E)": 0,
+        "Drop D (D, A, D, G, H, E)": 1
+    }).name("Tuning");
 
     MediaStreamTrack.getSources(function (sourceInfos) {
         var options = {};

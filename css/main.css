@@ -1,11 +1,10 @@
 
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
 
 
-
+* {
+   font-family: 'Roboto', sans-serif;
+}
 
 .dg button, .dg input, .dg optgroup, .dg select, .dg textarea {
    margin: 0;
