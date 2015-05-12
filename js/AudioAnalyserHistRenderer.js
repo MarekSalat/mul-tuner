@@ -12,7 +12,6 @@ var AudioAnalyserHistRenderer = (function(){
         var canvas = this.canvas;
         var context = canvas.getContext("2d");
 
-
         context.save();
             // purple 300
             context.fillStyle = "#ECEFF1";
@@ -30,13 +29,14 @@ var AudioAnalyserHistRenderer = (function(){
             this.audioAnalyser.analyser.getByteFrequencyData(freqDomain);
             var i = Math.floor(this.audioAnalyser.HIGHPASS_FREQ / (this.audioAnalyser.audioContext.sampleRate / 2) * this.audioAnalyser.analyser.frequencyBinCount);
 
+            var barWidth = WIDTH/bins;
             for (; i < bins; i++) {
                 var gamma = Math.pow(this.audioAnalyser.GAMMA, i);
                 var value = freqDomain[i] * gamma;
                 var percent = value / 256;
                 var height = HEIGHT * percent;
                 var offset = HEIGHT - height - 1;
-                var barWidth = WIDTH/bins;
+
                 var hue = i/bins * 360;
                 context.fillStyle = '#E91E63'; //'hsl(' + hue + ', 100%, 50%)';
                 context.fillRect(i * barWidth, offset, barWidth, height);

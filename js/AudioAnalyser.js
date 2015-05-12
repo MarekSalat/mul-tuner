@@ -8,7 +8,7 @@ var AudioAnalyser = (function () {
     };
 
     var interpolationGaussian = function (y1, y2, y3) {
-        return Math.log(y3/y1)/(2*Math.log((y2*y2) / (y1*y2)))
+        return Math.log(y3/y1)/(2*Math.log((y2*y2) / (y3*y1)))
     };
 
     function AudioAnalyser(audioContext){
@@ -24,9 +24,6 @@ var AudioAnalyser = (function () {
         this.audioContext = audioContext;
 
         this.GAMMA = 0.98;
-        // normal setting
-        //this.FFT_MIN_DECIBELS = -65;
-        //this.FFT_SMOOTHING_TIME_CONSTANT = 0.9;
         // line in setting
         this.FFT_MIN_DECIBELS = -100;
         this.FFT_SMOOTHING_TIME_CONSTANT = 0.99;
@@ -96,10 +93,13 @@ var AudioAnalyser = (function () {
             var gamma = Math.pow(this.GAMMA, index);
             buffer[index] -= this.analyser.minDecibels;
 
-            // var value = buffer[index-1]*gamma + buffer[index]*gamma + buffer[index+1]*gamma;
             var value = buffer[index]*gamma;
 
-            if(value > maxValue){
+            // FIX: A110 note fix, we can accept value without applying gamma only if current max value index is one bin left.
+            if(maxValueIndex+1 == index)
+                value = buffer[index];
+
+            if(value >= maxValue){
                 maxValue = buffer[index];
                 maxValueIndex = index;
             }
