@@ -23,13 +23,13 @@ var AudioAnalyser = (function () {
 
         this.audioContext = audioContext;
 
-        this.GAMMA = 0.985;
+        this.GAMMA = 0.98;
         // normal setting
         //this.FFT_MIN_DECIBELS = -65;
         //this.FFT_SMOOTHING_TIME_CONSTANT = 0.9;
         // line in setting
-        this.FFT_MIN_DECIBELS = -97;
-        this.FFT_SMOOTHING_TIME_CONSTANT = 0.81;
+        this.FFT_MIN_DECIBELS = -100;
+        this.FFT_SMOOTHING_TIME_CONSTANT = 0.99;
 
         this.onFrequencyChanged = function(noteInfo){};
 
