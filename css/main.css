@@ -4,6 +4,15 @@
 
 * {
    font-family: 'Roboto', sans-serif;
+   text-align: justify;
+}
+
+.dg .main * {
+   z-index: 500;
+}
+
+.dg.ac {
+   z-index: 500;
 }
 
 .dg button, .dg input, .dg optgroup, .dg select, .dg textarea {

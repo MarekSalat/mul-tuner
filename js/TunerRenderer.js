@@ -86,9 +86,9 @@ var TunerRenderer = (function(){
 
         context.save();
             // draw note name and octave
-            context.translate(context.canvas.width/2, context.canvas.height/2 + context.canvas.height*0.15);
+            context.translate(context.canvas.width/2, context.canvas.height/2 + context.canvas.height*0.1);
             context.save();
-                var textHeight = canvas.height/4;
+                var textHeight = canvas.width * 0.07;
 
                 context.font = '100 '+textHeight+'px Roboto';
                 context.textAlign = 'center';
@@ -101,15 +101,15 @@ var TunerRenderer = (function(){
 
             // draw circles
             context.save();
-                var radius = canvas.height / 3;
+                var radius = canvas.width * 0.1;
                 var startAngle = -Math.PI / 2;
                 var endAngle = 2 * Math.PI * this.currentNoteProggress + startAngle;
                 var lineWidth = 3;
 
                 if(this.state === this.STATES.ACCEPTING){
                     var phase = this.acceptingDuration / this.ACCEPTING_DURATION;
-                    if(phase < 0.33){
-                        phase /= 0.33;
+                    if(phase < 0.25){
+                        phase /= 0.25;
                         phase = phase < 0.5 ? phase : 1-phase
                     }
                     else

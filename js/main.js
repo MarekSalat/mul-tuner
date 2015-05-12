@@ -12,6 +12,9 @@ $(function(){
 
         resizeCanvas(document.getElementById("tuner-canvas"), window.innerWidth, window.innerHeight*ratio+2);
         resizeCanvas(document.getElementById("hist-freq-canvas"), window.innerWidth, window.innerHeight*(1-ratio));
+
+        !histRenderer || histRenderer.draw();
+        !tunerRenderer || tunerRenderer.draw();
     }
     window.addEventListener('resize', resizeCanvases, false);
     resizeCanvases();
@@ -33,6 +36,7 @@ $(function(){
     var tunerRenderer = new TunerRenderer(document.getElementById("tuner-canvas"));
     histRenderer.draw();
     tunerRenderer.draw();
+    resizeCanvases();
 
     var request = new XMLHttpRequest();
     request.open("GET", "res/whistling3.ogg", true);
@@ -70,15 +74,30 @@ $(function(){
 
     var gui = new dat.GUI();
     gui.add({stop: reset}, "stop");
-    gui.add({d:true}, "d").name("Debug").onFinishChange(function (value){
+
+    $("#debug").hide();
+    gui.add({d:false}, "d").name("Debug").onFinishChange(function (value){
         if(value)
             $("#debug").show();
         else
-            $("#debug").hide()
+            $("#debug").hide();
+    });
+    gui.add({h:true}, "h").name("Help").onFinishChange(function (value){
+        if(value)
+            $("#help").show();
+        else
+            $("#help").hide();
+    });
+    gui.add({h:true}, "h").name("Tips").onFinishChange(function (value){
+        if(value)
+            $("#tips").show();
+        else
+            $("#tips").hide();
     });
 
+
     var settingFolder = gui.addFolder("Setting");
-    settingFolder.add(analyser, "GAMMA").min(0.8).max(1);
+    settingFolder.add(analyser, "GAMMA").min(0.95).max(1);
     settingFolder.add({windowSize:movingAverage.size}, "windowSize").step(1).min(1).max(64).name("AVG window size").onFinishChange(function(value){
         movingAverage = new MovingAverage(value);
     });
@@ -89,7 +108,7 @@ $(function(){
             analyser.interpolate =  analyser.INTERPOLATION_GAUSSIAN;
     });
     settingFolder.add(analyser, "FFT_MIN_DECIBELS").step(1).min(-100).max(-27.2101).name("FFT min decibels").onFinishChange(reset.bind(this));
-    settingFolder.add(analyser, "FFT_SMOOTHING_TIME_CONSTANT").min(0.5).max(1).name("FFT smoothing").onFinishChange(reset.bind(this));
+    settingFolder.add(analyser, "FFT_SMOOTHING_TIME_CONSTANT").min(0.5).max(0.99).name("FFT smoothing").onFinishChange(reset.bind(this));
 
     gui.add({note: "e"}, "note", ["he", "h", "g", "d", "a", "e", "aa"]).name("Note to play").onFinishChange(function (note) {
         var play = function (){
@@ -179,15 +198,11 @@ $(function(){
     }}, "live");
 
     var tunerFolder = gui.addFolder("Tunner setting");
+    tunerFolder.open();
 
-    tunerFolder.add({basePitch: 440}, "basePitch").min(80).max(880).step(1).onFinishChange(function(value){
+    tunerFolder.add({basePitch: 440}, "basePitch").min(410).max(470).step(1).name('Pitch of A').onFinishChange(function(value){
         notes.BASE_NOTE_PITCH = value;
     });
-
-    tunerFolder.add({tuning: 0}, "tuning",{
-        "E standart (E, A, D, G, H, E)": 0,
-        "Drop D (D, A, D, G, H, E)": 1
-    }).name("Tuning");
 
     MediaStreamTrack.getSources(function (sourceInfos) {
         var options = {};

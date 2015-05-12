@@ -32,11 +32,35 @@
     </head>
     <body style=" width:  100%; height: 100%; margin: 0px;">
         <a href="https://github.com/MarekSalat/mul-tuner"><img style="position: absolute; z-index: 1000; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png"></a>
-        <div id="content" style="position: absolute; bottom: 50px; right: 50px; z-index: 500">
-            <pre id="debug" style="width: 22em; height: 15em; opacity: 5; "></pre>
+        <div id="content" style="position: absolute; bottom: 50px; left: 5%; z-index: 20">
+            <pre id="debug" style="width: 22em; height: 15em; opacity: 0.5; "></pre>
         </div>
 
-        <div></div>
+        <section id="help" style="position: absolute; left: 5%; top: 3em; width: 28%; z-index: 30;">
+            <h1 style="text-align: left">Simple html5 guitar tuner</h1>
+            <p>Plug in your guitar or mic and try to tune your instrument.</p>
+            <h3>How to use</h3>
+            <p>
+                Strum the string you want to tune little bit harder than you usually play.
+                Use guitars tuners to tune string. When you see your desired note try to get dot to the blue range.
+                If the dot is in the blue range long enough your note is accepted by a green pulsing circle.
+                <ol>
+                    <li>Red dot means your note too low</li>
+                    <li>Green dot means your note too high</li>
+                    <li>Blue dot means your note okay</li>
+                    <li>Black circle indicates duration od note within range</li>
+                    <li>Green pulsing indicates good tuning for your string</li>
+                </ol>
+            </p>
+        </section>
+        <section id="tips" style="position: absolute; right: 5%; bottom: 6em; width: 28%; z-index: 1;">
+            <h3>Tips and limitations</h3>
+            <p>Due technical difficulties you can achieve best results if you strum first or second string at 12 fret.</p>
+            <p>If you are using mic, try to fiddle setting. My recommendations are gamma=0.98, min decibels=-65, fft smoothing=0.9)</p>
+            <p>* <small style="font-size: 65%">Low A (~110Hz) string might be challenging to tune.
+                Best practise is to down tune the string just a little approximately -6 cents to get right tone.
+                Tune bias might be added in upcoming feature update.</small></p>
+        </section>
 
         <canvas id="tuner-canvas" style="position: absolute; top: 0;" ></canvas>
         <canvas id="hist-freq-canvas" style="position: absolute; bottom: 0;" ></canvas>
